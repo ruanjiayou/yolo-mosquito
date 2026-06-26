@@ -1,0 +1,15 @@
+#!/bin/bash
+CURRENT_DIR=$(pwd)
+
+> "$CURRENT_DIR/mosquito_data.yaml"
+
+echo "path: $CURRENT_DIR/dataset
+train: images/train
+val: images/val
+nc: 1
+names: ['mosquito']" >> "$CURRENT_DIR/mosquito_data.yaml"
+
+# yolo detect train data="$CURRENT_DIR/mosquito_data.yaml" model=yolov8n.pt epochs=50 imgsz=640
+yolo detect train data="$CURRENT_DIR/mosquito_data.yaml" model=yolov8s.pt epochs=200 imgsz=640 batch=16 optimizer=SGD lr0=0.002 momentum=0.9 weight_decay=0.0005
+
+echo "✅ 训练完成！"
