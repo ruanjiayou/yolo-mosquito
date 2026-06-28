@@ -4,7 +4,7 @@ import path from 'path';
 /**
  * 下载蚊子图片数据
  */
-const file = Bun.file("./scripts/File_List.json");
+const file = Bun.file("./scripts/data/File_List.json");
 const list = await file.json();
 
 let total = 0;

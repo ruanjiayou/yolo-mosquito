@@ -2,8 +2,14 @@
 
 ## 安装环境
 > 如果numpy有问题: `pip3 install --user "numpy<2.0"`
-- pip3 install --user ultralytics opencv-python
+- pip3 install --user ultralytics
+- (pip3 install opencv-python==4.10.0.84)
 - 添加到~/.bash_profile中 `export PATH="$HOME/Library/Python/3.9/bin:$PATH"`,并 `source ~/.bash_profile`
+### windows
+- 提示yolo不存在或ultralytics有问题就重装ultralytics
+- `CURRENT_DIR=$(pwd)`在window里有问题换为`CURRENT_DIR="R:/yolo-mosquito"`
+- 安装cuda: `pip install torch==2.0.0+cu118 torchvision==0.15.0+cu118 torchaudio==2.0.0+cu118 -f https://download.pytorch.org/whl/cu118/torch_stable.html`,或（）`pip install torch==2.0.0+cu118 torchvision==0.15.0+cu118 torchaudio==2.0.0+cu118 --index-url https://download.pytorch.org/whl/cu118 --timeout 1000`
+- 测试cuda: `python -c "import torch; print(torch.__version__); print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0))"`
 
 ### 标注
 > 增加空标注样本,尽可能贴近你的实际部署场景,多拍不同角度不同光线的背景图

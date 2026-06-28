@@ -4,7 +4,7 @@ import { existsSync } from "fs";
 
 // --- 配置区域 ---
 const PROJECT_ROOT = process.cwd(); // 项目根目录
-const RAW_ROOT = join(PROJECT_ROOT, "raw"); // 原始数据目录
+const RAW_ROOT = join(PROJECT_ROOT, "output"); // 原始数据目录
 const DATASET_ROOT = join(PROJECT_ROOT, "dataset"); // 训练数据集目录
 
 const VAL_GROUP_SIZE = 10; // 每10组取1组作为验证集
@@ -23,28 +23,22 @@ interface DataGroup {
 async function collectAllDataGroups(): Promise<DataGroup[]> {
   const groups: DataGroup[] = [];
 
-  const entries = await readdir(RAW_ROOT, { withFileTypes: true });
-  for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
-    // 单个增量目录
-    const dir = join(RAW_ROOT, entry.name);
-    if (!existsSync(dir + "/images") || !existsSync(dir + "/labels")) continue;
+  const dir = RAW_ROOT;
 
-    const files = await readdir(dir + "/images", { withFileTypes: true });
-    for (const file of files) {
-      // 是文件且是图片,对应的标注也有
-      if (file.isFile()) {
-        const [name, ext] = file.name.split('.');
-        const labelPath = join(dir, "labels", name + ".txt")
-        if (IMG_EXTS.has(ext) && existsSync(labelPath)) {
-          groups.push({
-            imgPath: join(file.parentPath, file.name),
-            labelPath: labelPath,
-            baseName: name,
-          });
-        } else {
-          console.warn(`⚠️ 警告: 找不到图片 ${file.name} 对应的标注文件，已跳过`);
-        }
+  const files = await readdir(dir + "/images", { withFileTypes: true });
+  for (const file of files) {
+    // 是文件且是图片,对应的标注也有
+    if (file.isFile()) {
+      const [name, ext] = file.name.split('.');
+      const labelPath = join(dir, "labels", name + ".txt")
+      if (IMG_EXTS.has(ext) && existsSync(labelPath)) {
+        groups.push({
+          imgPath: join(file.parentPath, file.name),
+          labelPath: labelPath,
+          baseName: name,
+        });
+      } else {
+        console.warn(`⚠️ 警告: 找不到图片 ${file.name} 对应的标注文件，已跳过`);
       }
     }
   }
@@ -123,7 +117,7 @@ async function main() {
   const allGroups = await collectAllDataGroups();
   const total = allGroups.length;
   console.log(`📊 共找到 ${total} 组有效数据 (图片+标注)`);
-  
+
   if (total < VAL_GROUP_SIZE) {
     console.error(`❌ 错误: 总组数 (${total}) 少于 ${VAL_GROUP_SIZE}，无法分配验证集，已退出。`);
     process.exit(1);

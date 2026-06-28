@@ -38,7 +38,7 @@ while cap.isOpened():
     # 只有当前帧是特定帧时才进行推理
     if frame_count % process_every_n_frames == 0:
         # 3. 用模型进行预测
-        results = model(frame, stream=True, conf=0.6)
+        results = model(frame, stream=True, conf=0.4)
 
         # 4. 把检测结果画在画面上并显示
         for r in results:
